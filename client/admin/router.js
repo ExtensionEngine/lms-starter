@@ -22,6 +22,8 @@ const parseProgramId = ({ params }) => ({
 const fallbackRoute = { path: '*', component: NotFound };
 
 const router = new Router({
+  mode: process.env.HISTORY_API_FALLBACK ? 'history' : 'hash',
+  base: '/admin/',
   routes: [{
     path: '/',
     name: 'users',

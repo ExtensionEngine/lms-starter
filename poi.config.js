@@ -21,7 +21,8 @@ const devServer = {
   },
   // Override using: `npm run dev:client -- --port <number>`
   port: 8081,
-  hotEntries: ['admin', 'main']
+  hotEntries: ['admin', 'main'],
+  historyApiFallback: config.historyApiFallbackOptions
 };
 
 module.exports = {
@@ -51,8 +52,9 @@ module.exports = {
     sourceMap: !isProduction
   },
   envs: {
-    API_PATH: process.env.API_PATH,
-    AUTH_JWT_SCHEME: process.env.AUTH_JWT_SCHEME
+    API_PATH: config.apiPath,
+    AUTH_JWT_SCHEME: config.auth.scheme,
+    HISTORY_API_FALLBACK: config.useHistoryApiFallback
   },
   chainWebpack(config) {
     config.resolve.alias.merge(aliases);

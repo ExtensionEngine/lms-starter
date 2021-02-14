@@ -2,12 +2,19 @@
 
 const ms = require('ms');
 const path = require('path');
+const yn = require('yn');
 
 module.exports = {
   hostname: process.env.HOSTNAME,
   port: process.env.PORT,
   ip: process.env.IP,
-  useHistoryApiFallback: process.env.HISTORY_API_FALLBACK,
+  useHistoryApiFallback: yn(process.env.HISTORY_API_FALLBACK),
+  historyApiFallbackOptions: {
+    rewrites: [
+      { from: /^\/admin\/.+/, to: '/admin/' },
+      { from: /^\/.+/, to: '/' }
+    ]
+  },
   apiPath: process.env.API_PATH || '/api/v1/',
   staticFolder: path.resolve(__dirname, '../dist'),
   uploadLimit: '10mb',

@@ -26,6 +26,7 @@ const parseParams = ({ params }) => {
 const fallbackRoute = { path: '*', component: NotFound };
 
 const router = new Router({
+  mode: process.env.HISTORY_API_FALLBACK ? 'history' : 'hash',
   routes: [{
     path: '/auth',
     name: 'auth',
