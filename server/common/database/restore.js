@@ -21,7 +21,7 @@ module.exports = {
   restoreOrCreateAll
 };
 
-async function restoreOrBuildAll(Model, items = [], { where } = {}, options = {}) {
+async function restoreOrBuildAll(Model, items = [], where = {}, options = {}) {
   const { save = false, concurrency = 16, modelSearchKey = 'id' } = options;
   const found = await Model.findAll({ where, paranoid: false });
   const results = await Promise.map(items, item => pTuple(() => {

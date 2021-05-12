@@ -1,22 +1,25 @@
 import Content from '@/admin/components/Offerings/Program/Content';
 import Enrollments from '@/admin/components/Offerings/Enrollments';
 import get from 'lodash/get';
+import Members from '@/admin/components/UserGroups/UserGroup/Members';
 import { navigateTo } from '@/common/navigation';
 import NotFound from '@/admin/components/common/NotFound';
+import { numeric as numericParser } from '@/common/utils/paramsParser';
 import Offerings from '@/admin/components/Offerings';
+import OfferingUserGroups from '@/admin/components/Offerings/UserGroups';
 import Program from '@/admin/components/Offerings/Program';
 import { Role } from '@/../common/config';
 import Router from 'vue-router';
 import Settings from '@/admin/components/Offerings/Program/Settings';
 import store from './store';
+import UserGroup from '@/admin/components/UserGroups/UserGroup';
+import UserGroups from '@/admin/components/UserGroups';
+import UserGroupSettings from '@/admin/components/UserGroups/UserGroup/Settings';
 import Users from '@/admin/components/users';
+import UserSubGroups from '@/admin/components/UserGroups/UserGroup/SubGroups';
 import Vue from 'vue';
 
 Vue.use(Router);
-
-const parseProgramId = ({ params }) => ({
-  programId: parseInt(params.programId, 10)
-});
 
 // Handle 404
 const fallbackRoute = { path: '*', component: NotFound };
@@ -28,6 +31,33 @@ const router = new Router({
     component: Users,
     meta: { auth: true }
   }, {
+    path: '/user-groups',
+    name: 'userGroups',
+    component: UserGroups,
+    meta: { auth: true }
+  }, {
+    path: '/user-groups/:userGroupId',
+    component: UserGroup,
+    props: numericParser.params,
+    children: [{
+      path: 'members',
+      name: 'members',
+      component: Members,
+      props: numericParser.params,
+      meta: { auth: true }
+    }, {
+      path: 'sub-groups',
+      name: 'subGroups',
+      component: UserSubGroups,
+      props: numericParser.params,
+      meta: { auth: true }
+    }, {
+      path: 'settings',
+      name: 'userGroupSettings',
+      component: UserGroupSettings,
+      props: numericParser.params
+    }]
+  }, {
     path: '/offerings',
     name: 'offerings',
     component: Offerings,
@@ -35,22 +65,27 @@ const router = new Router({
   }, {
     path: '/programs/:programId',
     component: Program,
-    props: parseProgramId,
+    props: numericParser.params,
     children: [{
       path: '',
       name: 'programEnrollments',
       component: Enrollments,
-      props: parseProgramId
+      props: numericParser.params
+    }, {
+      path: 'user-groups',
+      name: 'offeringUserGroups',
+      component: OfferingUserGroups,
+      props: numericParser.params
     }, {
       path: 'content',
       name: 'importedContent',
       component: Content,
-      props: parseProgramId
+      props: numericParser.params
     }, {
       path: 'settings',
       name: 'programSettings',
       component: Settings,
-      props: parseProgramId
+      props: numericParser.params
     }]
   }, fallbackRoute]
 });

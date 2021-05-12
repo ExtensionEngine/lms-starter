@@ -1,17 +1,16 @@
 <template>
-  <admin-dialog v-model="isVisible" header-icon="mdi-school">
+  <admin-dialog v-model="isVisible" @click:outside="close" header-icon="mdi-school">
     <template v-slot:activator="{ on }">
       <v-btn v-on="on" text>
         <v-icon dense class="mr-1">mdi-school</v-icon>
         Enroll learner
       </v-btn>
     </template>
-    <template v-slot:header>Enroll learner</template>
+    <template v-slot:header>Enroll Learner</template>
     <template v-slot:body>
       <validation-observer
         v-if="isVisible"
         ref="form"
-        v-slot="{ invalid }"
         @submit.prevent="$refs.form.handleSubmit(enroll)"
         tag="form"
         novalidate>
@@ -19,21 +18,18 @@
           v-slot="{ errors }"
           :rules="{ required: true, unique_enrollment: { learnerId, offeringId } }"
           name="learner">
-          <v-autocomplete
-            v-model="learnerId"
-            :items="learners"
+          <user-select
+            v-model="learner"
+            :params="{ role: 'LEARNER' }"
             :error-messages="errors"
-            :search-input.sync="email"
-            :loading="isLoading"
-            name="learner"
             label="Learner"
-            placeholder="Start typing to Search"
-            prepend-icon="mdi-magnify"
-            clearable />
+            append-icon="mdi-magnify"
+            clearable outlined
+            class="mb-1" />
         </validation-provider>
         <div class="d-flex justify-end">
           <v-btn @click="close" text>Cancel</v-btn>
-          <v-btn :disabled="invalid" type="submit" text>Enroll</v-btn>
+          <v-btn type="submit" text>Enroll</v-btn>
         </div>
       </validation-observer>
     </template>
@@ -43,9 +39,8 @@
 <script>
 import AdminDialog from '@/admin/components/common/Dialog';
 import enrollmentApi from '@/admin/api/enrollment';
-import map from 'lodash/map';
 import pick from 'lodash/pick';
-import userApi from '@/admin/api/user';
+import UserSelect from '@/admin/components/common/UserSelect';
 
 export default {
   name: 'enrollment-dialog',
@@ -54,11 +49,12 @@ export default {
   },
   data: () => ({
     isVisible: false,
-    email: null,
-    learnerId: null,
-    learners: [],
+    learner: null,
     isLoading: false
   }),
+  computed: {
+    learnerId: vm => vm.learner?.id
+  },
   methods: {
     async enroll() {
       const params = pick(this, ['learnerId', 'offeringId']);
@@ -68,32 +64,9 @@ export default {
     },
     close() {
       this.isVisible = false;
-      this.learnerId = null;
-    },
-    setLearners({ items: learners }) {
-      this.learners = map(learners, ({ id, email, firstName, lastName }) => ({
-        value: id,
-        text: `${email} - ${firstName} ${lastName}`
-      }));
-    },
-    fetch(email) {
-      if (this.learnerId) return;
-      this.isLoading = true;
-      const params = { emailLike: email, role: 'LEARNER', limit: 30 };
-      return userApi.fetch({ params })
-        .then(this.setLearners)
-        .finally(() => (this.isLoading = false));
+      this.learner = null;
     }
   },
-  watch: {
-    email(val) {
-      if (val) this.fetch(val);
-    },
-    isVisible(val) {
-      if (!val) return;
-      this.fetch();
-    }
-  },
-  components: { AdminDialog }
+  components: { AdminDialog, UserSelect }
 };
 </script>

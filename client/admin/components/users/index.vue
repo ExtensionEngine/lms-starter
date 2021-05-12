@@ -131,10 +131,9 @@ export default {
     }, 400),
     archiveOrRestore(user) {
       const action = user.deletedAt ? 'restore' : 'archive';
-      const name = user.firstName + ' ' + user.lastName;
       this.confirmation = {
         heading: `${humanize(action)} user`,
-        message: `Are you sure you want to ${action} user "${name}"?`,
+        message: `Are you sure you want to ${action} user "${user.label}"?`,
         action: actions(user)[action]
       };
     }
@@ -157,28 +156,5 @@ export default {
 .user-table ::v-deep .v-input--checkbox {
   justify-content: center;
   margin-top: 0;
-}
-
-::v-deep .archived-checkbox {
-  &.v-input--checkbox {
-    justify-content: flex-end;
-  }
-
-  .v-input__slot {
-    flex-direction: row-reverse;
-
-    .v-input--selection-controls__input {
-      justify-content: center;
-      margin-right: 0;
-    }
-
-    .v-icon {
-      font-size: 1.125rem;
-    }
-
-    label {
-      font-size: 0.875rem;
-    }
-  }
 }
 </style>

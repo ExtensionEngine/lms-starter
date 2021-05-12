@@ -1,5 +1,9 @@
 <template>
-  <admin-dialog v-model="visible" width="600" header-icon="mdi-cloud-upload">
+  <admin-dialog
+    v-model="visible"
+    @click:outside="close"
+    width="600"
+    header-icon="mdi-cloud-upload">
     <template v-slot:activator="{ on }">
       <v-btn v-on="on" color="primary" text>
         <v-icon dense class="mr-1">mdi-cloud-upload</v-icon>Import users

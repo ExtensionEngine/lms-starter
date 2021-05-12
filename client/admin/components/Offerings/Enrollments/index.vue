@@ -30,7 +30,7 @@
           <td class="text-no-wrap">{{ item.createdAt | formatDate }}</td>
           <td class="text-no-wrap text-center">
             <v-btn @click="unenroll(item)" icon x-small>
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>mdi-delete-outline</v-icon>
             </v-btn>
           </td>
         </tr>
@@ -53,7 +53,6 @@ import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 
 const defaultPage = () => ({ sortBy: ['updatedAt'], sortDesc: [true], page: 1 });
-const fullName = learner => `${learner.firstName} ${learner.lastName}`;
 const headers = () => [
   { text: 'Email', value: 'learner.email', align: 'left' },
   { text: 'First Name', value: 'learner.first_name' },
@@ -98,7 +97,7 @@ export default {
     unenroll(enrollment) {
       const { learner } = enrollment;
       Object.assign(this.confirmation, {
-        message: `Are you sure you want to unenroll "${fullName(learner)}"?`,
+        message: `Are you sure you want to unenroll "${learner.label}"?`,
         action: () => api.remove(enrollment),
         dialog: true
       });

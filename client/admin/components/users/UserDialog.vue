@@ -1,5 +1,5 @@
 <template>
-  <admin-dialog v-model="show" header-icon="mdi-folder-plus-outline">
+  <admin-dialog v-model="show" header-icon="mdi-account-plus-outline">
     <template v-slot:header>
       {{ userData ? 'Edit' : 'Create' }} User
     </template>
@@ -110,7 +110,7 @@ export default {
         if (!value) this.close();
       }
     },
-    roles: vm => map(Role, it => ({ text: humanize(it), value: it })),
+    roles: () => map(Role, it => ({ text: humanize(it), value: it })),
     isNewUser: vm => !vm.user.id
   },
   methods: {
@@ -130,8 +130,9 @@ export default {
   },
   watch: {
     show(val) {
-      if (!val) return;
-      if (!isEmpty(this.userData)) this.user = cloneDeep(this.userData);
+      const { userData } = this;
+      if (!val || isEmpty(userData)) return;
+      this.user = cloneDeep(userData);
     }
   },
   components: {

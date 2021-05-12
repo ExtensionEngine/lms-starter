@@ -7,6 +7,7 @@ import Home from '@/main/components';
 import Login from '@/main/components/auth/Login';
 import { navigateTo } from '@/common/navigation';
 import NotFound from '@/admin/components/common/NotFound';
+import { numeric as numericParser } from '@/common/utils/paramsParser';
 import Preview from '@/main/components/preview';
 import Program from '@/main/components/program';
 import ProgramSelection from '@/main/components/ProgramSelection';
@@ -14,14 +15,10 @@ import ResetPassword from '@/main/components/auth/ResetPassword';
 import { Role } from '@/../common/config';
 import Router from 'vue-router';
 import store from './store';
-import transform from 'lodash/transform';
 import Vue from 'vue';
 
 Vue.use(Router);
 
-const parseParams = ({ params }) => {
-  return transform(params, (acc, val, key) => (acc[key] = parseInt(val, 10)), {});
-};
 // Handle 404
 const fallbackRoute = { path: '*', component: NotFound };
 
@@ -54,17 +51,17 @@ const router = new Router({
     }, {
       path: 'programs/:programId',
       component: Program,
-      props: parseParams,
+      props: numericParser.params,
       children: [{
         path: '',
         name: 'courseware',
         component: Courseware,
-        props: parseParams
+        props: numericParser.params
       }, {
         path: 'repository/:repositoryId/activity/:activityId',
         name: 'activity',
         component: Activity,
-        props: parseParams
+        props: numericParser.params
       }]
     }]
   },
@@ -72,7 +69,7 @@ const router = new Router({
     path: '/preview/:previewId',
     name: 'preview',
     component: Preview,
-    props: parseParams
+    props: numericParser.params
   },
   fallbackRoute]
 });

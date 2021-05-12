@@ -46,7 +46,7 @@
               v-if="!item.deletedAt"
               @click="showConfirmationDialog(item)"
               icon x-small>
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>mdi-delete-outline</v-icon>
             </v-btn>
             <v-btn v-else @click="showRestoreDialog(item)" icon x-small>
               <v-icon>mdi-restore</v-icon>
@@ -157,27 +157,5 @@ export default {
 <style lang="scss" scoped>
 .actions {
   width: 15.625rem;
-}
-
-::v-deep .archived-checkbox {
-  &.v-input--checkbox {
-    justify-content: flex-end;
-  }
-
-  .v-input__slot {
-    flex-direction: row-reverse;
-
-    .v-input--selection-controls__input {
-      margin-right: 0;
-    }
-
-    .v-icon {
-      font-size: 1.125rem;
-    }
-
-    label {
-      font-size: 0.875rem;
-    }
-  }
 }
 </style>

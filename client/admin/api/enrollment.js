@@ -13,7 +13,8 @@ function fetch(opts) {
 }
 
 function create(payload) {
-  return request.post(urls.root, payload).then(extractData);
+  return request.post(urls.root, payload)
+    .then(extractData);
 }
 
 function remove(item) {

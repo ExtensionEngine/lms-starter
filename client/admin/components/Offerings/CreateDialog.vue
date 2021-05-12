@@ -1,5 +1,5 @@
 <template>
-  <admin-dialog v-model="visible" header-icon="mdi-plus">
+  <admin-dialog v-model="visible" header-icon="mdi-layers-plus">
     <template v-slot:activator="{ on }">
       <v-btn v-on="on" text>
         <v-icon dense class="mr-1">mdi-plus</v-icon>

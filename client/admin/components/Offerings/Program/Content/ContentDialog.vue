@@ -1,5 +1,8 @@
 <template>
-  <admin-dialog v-model="isVisible" header-icon="mdi-book-arrow-up-outline">
+  <admin-dialog
+    v-model="isVisible"
+    @click:outside="close"
+    header-icon="mdi-book-arrow-up-outline">
     <template v-slot:activator="{ on }">
       <v-btn v-on="on" text>
         <v-icon dense class="mr-1">mdi-book-arrow-up-outline</v-icon>

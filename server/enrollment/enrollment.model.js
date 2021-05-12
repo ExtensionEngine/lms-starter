@@ -5,8 +5,12 @@ const map = require('lodash/map');
 const { Model } = require('sequelize');
 
 class Enrollment extends Model {
-  static fields({ DATE }) {
+  static fields({ DATE, INTEGER }) {
     return {
+      enrollmentOfferingId: {
+        type: INTEGER,
+        field: 'enrollment_offering_id'
+      },
       createdAt: {
         type: DATE,
         field: 'created_at'
@@ -48,7 +52,7 @@ class Enrollment extends Model {
 
   static async restoreOrCreateAll(enrollments, options) {
     const where = { learnerId: map(enrollments, 'learnerId') };
-    return restoreOrCreateAll(this, enrollments, { where }, options);
+    return restoreOrCreateAll(this, enrollments, where, options);
   }
 }
 

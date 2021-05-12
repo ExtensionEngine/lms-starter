@@ -2,11 +2,13 @@
 
 const config = require('./config');
 const forEach = require('lodash/forEach');
+const Hooks = require('./hooks');
 const invoke = require('lodash/invoke');
 const { migrationsPath } = require('../../../sequelize.config');
 const pick = require('lodash/pick');
 const pkg = require('../../../package.json');
 const Promise = require('bluebird');
+const result = require('lodash/result');
 const semver = require('semver');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
@@ -19,8 +21,11 @@ const User = require('../../user/user.model');
 const Preview = require('../../preview/preview.model');
 const Program = require('../../program/program.model');
 const Enrollment = require('../../enrollment/enrollment.model');
-const EnrollmentOffering = require('../../enrollment/enrollment-offering.model');
+const EnrollmentOffering = require('../../enrollment-offering/enrollment-offering.model');
 const ContentRepo = require('../../content-repo/content-repo.model');
+const UserGroup = require('../../user-group/user-group.model');
+const UserGroupMembership = require('../../user-group/membership.model');
+const OfferingUserGroup = require('../../enrollment-offering/offering-user-group.model');
 /* eslint-enable require-sort/require-sort */
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -29,11 +34,9 @@ const { Sequelize: { DataTypes } } = sequelize;
 
 const defineModel = Model => {
   const fields = invoke(Model, 'fields', DataTypes, sequelize) || {};
-  const hooks = invoke(Model, 'hooks') || {};
-  const scopes = invoke(Model, 'scopes', sequelize) || {};
   const options = invoke(Model, 'options') || {};
   wrapMethods(Model, Promise);
-  return Model.init(fields, { sequelize, hooks, scopes, ...options });
+  return Model.init(fields, { sequelize, ...options });
 };
 
 function initialize() {
@@ -80,12 +83,16 @@ const models = {
   Program: defineModel(Program),
   Enrollment: defineModel(Enrollment),
   EnrollmentOffering: defineModel(EnrollmentOffering),
-  ContentRepo: defineModel(ContentRepo)
+  ContentRepo: defineModel(ContentRepo),
+  UserGroup: defineModel(UserGroup),
+  UserGroupMembership: defineModel(UserGroupMembership),
+  OfferingUserGroup: defineModel(OfferingUserGroup)
 };
 
 forEach(models, model => {
+  addScopes(model, models);
+  addHooks(model, Hooks, models);
   invoke(model, 'associate', models);
-  invoke(model, 'addHooks', models);
 });
 
 const db = {
@@ -132,4 +139,17 @@ function checkPostgreVersion(sequelize) {
       logger.error({ version, required: range }, err.message);
       return Promise.reject(err);
     });
+}
+
+function addHooks(model, Hooks, models) {
+  const hooks = invoke(model, 'hooks', Hooks, models);
+  forEach(hooks, (it, type) => model.addHook(type, it));
+}
+
+function addScopes(Model, models) {
+  const scopes = invoke(Model, 'scopes', models);
+  forEach(scopes, (scope, name) => {
+    if (name === 'defaultScope') scope = result(scopes, 'defaultScope');
+    Model.addScope(name, scope, { override: true });
+  });
 }

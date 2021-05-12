@@ -40,10 +40,9 @@ export default {
     type: vm => vm.contentRepo?.id ? OfferingType.COURSE : OfferingType.SERIES,
     name: vm => vm.isCourse ? vm.contentRepo.name : vm.program.name,
     to() {
-      const { contentRepo, program } = this;
-      return this.isCourse
-        ? { name: 'courseEnrollments', params: { courseId: contentRepo.id } }
-        : { name: 'programEnrollments', params: { programId: program.id } };
+      const { isCourse, contentRepo: course, program } = this;
+      const params = isCourse ? { courseId: course.id } : { programId: program.id };
+      return { name: 'offeringUserGroups', params };
     }
   }
 };

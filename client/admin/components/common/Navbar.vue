@@ -26,7 +26,7 @@
               </v-avatar>
             </v-btn>
           </template>
-          <span>{{ fullName }}</span>
+          <span>{{ user.label }}</span>
         </v-tooltip>
       </template>
       <v-list>
@@ -68,8 +68,8 @@ export default {
     ...mapState('auth', ['user']),
     ...mapState('programs', { programs: 'items' }),
     programId: vm => parseNumber(vm.$route.params.programId),
-    fullName: ({ user }) => `${user.firstName} ${user.lastName}`,
     tabs: () => [
+      { name: 'offeringUserGroups', label: 'User Groups' },
       { name: 'programEnrollments', label: 'Enrollments' },
       { name: 'importedContent', label: 'Content' },
       { name: 'programSettings', label: 'Settings' }
