@@ -7,7 +7,10 @@ const Worksheet = require('exceljs/dist/es5/doc/worksheet');
 
 const isCsv = file => file.mimetype === 'text/csv';
 const isString = arg => typeof arg === 'string';
-const parseCell = cell => cell.isHyperlink ? cell.value.text : cell.value;
+const parseCell = cell => cell.isHyperlink ? parseCellText(cell.value.text) : cell.value;
+const parseCellText = cellText => cellText.richText
+  ? cellText.richText.reduce((acc, it) => `${acc}${it.text}`, '')
+  : cellText;
 
 Object.assign(Workbook.prototype, {
   addSheet(sheet) {
